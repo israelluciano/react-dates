@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import momentPropTypes from 'react-moment-proptypes';
 import { forbidExtraProps, nonNegativeInteger } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
 import moment from 'moment';
+import Radium from 'radium';
 
 import { CalendarDayPhrases } from '../defaultPhrases';
 import getPhrasePropTypes from '../utils/getPhrasePropTypes';
@@ -12,9 +12,12 @@ import ModifiersShape from '../shapes/ModifiersShape';
 import BaseClass, { pureComponentAvailable } from '../utils/baseClass';
 
 import { DAY_SIZE } from '../constants';
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates: { font, color } } = DefaultTheme;
 
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
+
   day: momentPropTypes.momentObj,
   daySize: nonNegativeInteger,
   isOutsideDay: PropTypes.bool,
@@ -104,7 +107,6 @@ class CalendarDay extends BaseClass {
       modifiers,
       renderDayContents,
       tabIndex,
-      styles,
       phrases,
     } = this.props;
 
@@ -121,8 +123,8 @@ class CalendarDay extends BaseClass {
 
     return (
       <td
-        {...css(
-          styles.CalendarDay,
+        style = {
+          [styles.CalendarDay,
           useDefaultCursor && styles.CalendarDay__defaultCursor,
           styles.CalendarDay__default,
           isOutsideDay && styles.CalendarDay__outside,
@@ -140,8 +142,8 @@ class CalendarDay extends BaseClass {
           modifiers.has('selected-end') && styles.CalendarDay__selected_end,
           selected && styles.CalendarDay__selected,
           isOutsideRange && styles.CalendarDay__blocked_out_of_range,
-          daySizeStyles,
-        )}
+          daySizeStyles,]
+        }
         role="button" // eslint-disable-line jsx-a11y/no-noninteractive-element-to-interactive-role
         ref={this.setButtonRef}
         aria-label={ariaLabel}
@@ -161,8 +163,7 @@ class CalendarDay extends BaseClass {
 CalendarDay.propTypes = propTypes;
 CalendarDay.defaultProps = defaultProps;
 
-export { CalendarDay as PureCalendarDay };
-export default withStyles(({ reactDates: { color, font } }) => ({
+const styles = {
   CalendarDay: {
     boxSizing: 'border-box',
     cursor: 'pointer',
@@ -340,4 +341,7 @@ export default withStyles(({ reactDates: { color, font } }) => ({
   CalendarDay__today: {},
   CalendarDay__firstDayOfWeek: {},
   CalendarDay__lastDayOfWeek: {},
-}), { pureComponent: pureComponentAvailable })(CalendarDay);
+};
+
+export { CalendarDay as PureCalendarDay };
+export default Radium(CalendarDay);

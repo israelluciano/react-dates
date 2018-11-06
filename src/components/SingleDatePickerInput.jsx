@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { forbidExtraProps, nonNegativeInteger } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
+import Radium from 'radium';
 
 import { SingleDatePickerInputPhrases } from '../defaultPhrases';
 import getPhrasePropTypes from '../utils/getPhrasePropTypes';
@@ -14,10 +14,11 @@ import CalendarIcon from './CalendarIcon';
 
 import openDirectionShape from '../shapes/OpenDirectionShape';
 import { ICON_BEFORE_POSITION, ICON_AFTER_POSITION, OPEN_DOWN } from '../constants';
-import { pureComponentAvailable } from '../utils/baseClass';
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates: { border, color } } = DefaultTheme;
 
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   id: PropTypes.string.isRequired,
   placeholder: PropTypes.string, // also used as label
   displayValue: PropTypes.string,
@@ -119,24 +120,23 @@ function SingleDatePickerInput({
   small,
   regular,
   verticalSpacing,
-  styles,
 }) {
   const calendarIcon = customInputIcon || (
-    <CalendarIcon {...css(styles.SingleDatePickerInput_calendarIcon_svg)} />
+    <CalendarIcon style={styles.SingleDatePickerInput_calendarIcon_svg} />
   );
   const closeIcon = customCloseIcon || (
     <CloseButton
-      {...css(
-        styles.SingleDatePickerInput_clearDate_svg,
-        small && styles.SingleDatePickerInput_clearDate_svg__small,
-      )}
+      style={
+        [styles.SingleDatePickerInput_clearDate_svg,
+        small && styles.SingleDatePickerInput_clearDate_svg__small,]
+      }
     />
   );
 
   const screenReaderText = screenReaderMessage || phrases.keyboardNavigationInstructions;
   const inputIcon = (showDefaultInputIcon || customInputIcon !== null) && (
     <button
-      {...css(styles.SingleDatePickerInput_calendarIcon)}
+      style={styles.SingleDatePickerInput_calendarIcon}
       type="button"
       disabled={disabled}
       aria-label={phrases.focusStartDate}
@@ -148,14 +148,14 @@ function SingleDatePickerInput({
 
   return (
     <div
-      {...css(
-        styles.SingleDatePickerInput,
+      style={
+        [styles.SingleDatePickerInput,
         disabled && styles.SingleDatePickerInput__disabled,
         isRTL && styles.SingleDatePickerInput__rtl,
         !noBorder && styles.SingleDatePickerInput__withBorder,
         block && styles.SingleDatePickerInput__block,
-        showClearDate && styles.SingleDatePickerInput__showClearDate,
-      )}
+        showClearDate && styles.SingleDatePickerInput__showClearDate,]
+      }
     >
       {inputIconPosition === ICON_BEFORE_POSITION && inputIcon}
 
@@ -185,12 +185,12 @@ function SingleDatePickerInput({
 
       {showClearDate && (
         <button
-          {...css(
-            styles.SingleDatePickerInput_clearDate,
+          style={
+            [styles.SingleDatePickerInput_clearDate,
             small && styles.SingleDatePickerInput_clearDate__small,
             !customCloseIcon && styles.SingleDatePickerInput_clearDate__default,
-            !displayValue && styles.SingleDatePickerInput_clearDate__hide,
-          )}
+            !displayValue && styles.SingleDatePickerInput_clearDate__hide,]
+          }
           type="button"
           aria-label={phrases.clearDate}
           disabled={disabled}
@@ -208,8 +208,7 @@ function SingleDatePickerInput({
 
 SingleDatePickerInput.propTypes = propTypes;
 SingleDatePickerInput.defaultProps = defaultProps;
-
-export default withStyles(({ reactDates: { border, color } }) => ({
+const styles = {
   SingleDatePickerInput: {
     display: 'inline-block',
     backgroundColor: color.background,
@@ -307,4 +306,6 @@ export default withStyles(({ reactDates: { border, color } }) => ({
     width: 14,
     verticalAlign: 'middle',
   },
-}), { pureComponent: pureComponentAvailable })(SingleDatePickerInput);
+};
+
+export default Radium(SingleDatePickerInput);

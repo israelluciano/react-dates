@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { forbidExtraProps } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
+import Radium from 'radium';
 
 import { DayPickerKeyboardShortcutsPhrases } from '../defaultPhrases';
 import getPhrasePropTypes from '../utils/getPhrasePropTypes';
@@ -9,13 +9,15 @@ import BaseClass, { pureComponentAvailable } from '../utils/baseClass';
 
 import KeyboardShortcutRow from './KeyboardShortcutRow';
 import CloseButton from './CloseButton';
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates: { color, font, zIndex } } = DefaultTheme;
 
 export const TOP_LEFT = 'top-left';
 export const TOP_RIGHT = 'top-right';
 export const BOTTOM_RIGHT = 'bottom-right';
 
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   block: PropTypes.bool,
   buttonLocation: PropTypes.oneOf([TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT]),
   showKeyboardShortcutsPanel: PropTypes.bool,
@@ -166,7 +168,6 @@ class DayPickerKeyboardShortcuts extends BaseClass {
       buttonLocation,
       showKeyboardShortcutsPanel,
       closeKeyboardShortcutsPanel,
-      styles,
       phrases,
     } = this.props;
 
@@ -182,13 +183,13 @@ class DayPickerKeyboardShortcuts extends BaseClass {
       <div>
         <button
           ref={this.setShowKeyboardShortcutsButtonRef}
-          {...css(
-            styles.DayPickerKeyboardShortcuts_buttonReset,
+          style={
+            [styles.DayPickerKeyboardShortcuts_buttonReset,
             styles.DayPickerKeyboardShortcuts_show,
             bottomRight && styles.DayPickerKeyboardShortcuts_show__bottomRight,
             topRight && styles.DayPickerKeyboardShortcuts_show__topRight,
-            topLeft && styles.DayPickerKeyboardShortcuts_show__topLeft,
-          )}
+            topLeft && styles.DayPickerKeyboardShortcuts_show__topLeft,]
+          }
           type="button"
           aria-label={toggleButtonText}
           onClick={this.onShowKeyboardShortcutsButtonClick}
@@ -204,12 +205,12 @@ class DayPickerKeyboardShortcuts extends BaseClass {
           }}
         >
           <span
-            {...css(
-              styles.DayPickerKeyboardShortcuts_showSpan,
+            style={
+              [styles.DayPickerKeyboardShortcuts_showSpan,
               bottomRight && styles.DayPickerKeyboardShortcuts_showSpan__bottomRight,
               topRight && styles.DayPickerKeyboardShortcuts_showSpan__topRight,
-              topLeft && styles.DayPickerKeyboardShortcuts_showSpan__topLeft,
-            )}
+              topLeft && styles.DayPickerKeyboardShortcuts_showSpan__topLeft,]
+            }
           >
             ?
           </span>
@@ -217,13 +218,13 @@ class DayPickerKeyboardShortcuts extends BaseClass {
 
         {showKeyboardShortcutsPanel && (
           <div
-            {...css(styles.DayPickerKeyboardShortcuts_panel)}
+          style={styles.DayPickerKeyboardShortcuts_panel}
             role="dialog"
             aria-labelledby="DayPickerKeyboardShortcuts_title"
             aria-describedby="DayPickerKeyboardShortcuts_description"
           >
             <div
-              {...css(styles.DayPickerKeyboardShortcuts_title)}
+              style={styles.DayPickerKeyboardShortcuts_title}
               id="DayPickerKeyboardShortcuts_title"
             >
               {phrases.keyboardShortcuts}
@@ -231,21 +232,21 @@ class DayPickerKeyboardShortcuts extends BaseClass {
 
             <button
               ref={this.setHideKeyboardShortcutsButtonRef}
-              {...css(
-                styles.DayPickerKeyboardShortcuts_buttonReset,
-                styles.DayPickerKeyboardShortcuts_close,
-              )}
+              style={
+                [styles.DayPickerKeyboardShortcuts_buttonReset,
+                styles.DayPickerKeyboardShortcuts_close,]
+              }
               type="button"
               tabIndex="0"
               aria-label={phrases.hideKeyboardShortcutsPanel}
               onClick={closeKeyboardShortcutsPanel}
               onKeyDown={this.onKeyDown}
             >
-              <CloseButton {...css(styles.DayPickerKeyboardShortcuts_closeSvg)} />
+              <CloseButton style={styles.DayPickerKeyboardShortcuts_closeSvg} />
             </button>
 
             <ul
-              {...css(styles.DayPickerKeyboardShortcuts_list)}
+              style={styles.DayPickerKeyboardShortcuts_list}
               id="DayPickerKeyboardShortcuts_description"
             >
               {this.keyboardShortcuts.map(({ unicode, label, action }) => (
@@ -267,8 +268,7 @@ class DayPickerKeyboardShortcuts extends BaseClass {
 
 DayPickerKeyboardShortcuts.propTypes = propTypes;
 DayPickerKeyboardShortcuts.defaultProps = defaultProps;
-
-export default withStyles(({ reactDates: { color, font, zIndex } }) => ({
+const styles = {
   DayPickerKeyboardShortcuts_buttonReset: {
     background: 'none',
     border: 0,
@@ -396,4 +396,6 @@ export default withStyles(({ reactDates: { color, font, zIndex } }) => ({
       fill: color.core.grayLight,
     },
   },
-}), { pureComponent: pureComponentAvailable })(DayPickerKeyboardShortcuts);
+};
+
+export default Radium(DayPickerKeyboardShortcuts);

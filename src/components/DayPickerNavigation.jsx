@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { forbidExtraProps } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
+import Radium from 'radium';
 
 import { DayPickerNavigationPhrases } from '../defaultPhrases';
 import getPhrasePropTypes from '../utils/getPhrasePropTypes';
-import { pureComponentAvailable } from '../utils/baseClass';
 
 import LeftArrow from './LeftArrow';
 import RightArrow from './RightArrow';
@@ -18,8 +17,11 @@ import {
   VERTICAL_SCROLLABLE,
 } from '../constants';
 
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates: { color, zIndex } } = DefaultTheme;
+
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   navPrev: PropTypes.node,
   navNext: PropTypes.node,
   orientation: ScrollableOrientationShape,
@@ -54,7 +56,6 @@ function DayPickerNavigation({
   orientation,
   phrases,
   isRTL,
-  styles,
 }) {
   const isHorizontal = orientation === HORIZONTAL_ORIENTATION;
   const isVertical = orientation !== HORIZONTAL_ORIENTATION;
@@ -72,10 +73,10 @@ function DayPickerNavigation({
     }
     navPrevIcon = (
       <Icon
-        {...css(
-          isHorizontal && styles.DayPickerNavigation_svg__horizontal,
-          isVertical && styles.DayPickerNavigation_svg__vertical,
-        )}
+        style={
+          [isHorizontal && styles.DayPickerNavigation_svg__horizontal,
+          isVertical && styles.DayPickerNavigation_svg__vertical,]
+        }
       />
     );
   }
@@ -88,10 +89,10 @@ function DayPickerNavigation({
     }
     navNextIcon = (
       <Icon
-        {...css(
-          isHorizontal && styles.DayPickerNavigation_svg__horizontal,
-          isVertical && styles.DayPickerNavigation_svg__vertical,
-        )}
+      style={
+          [isHorizontal && styles.DayPickerNavigation_svg__horizontal,
+          isVertical && styles.DayPickerNavigation_svg__vertical,]
+        }
       />
     );
   }
@@ -102,8 +103,8 @@ function DayPickerNavigation({
 
   return (
     <div
-      {...css(
-        styles.DayPickerNavigation,
+    style={
+        [styles.DayPickerNavigation,
         isHorizontal && styles.DayPickerNavigation__horizontal,
         ...(isVertical ? [
           styles.DayPickerNavigation__vertical,
@@ -112,15 +113,16 @@ function DayPickerNavigation({
         ...(isVerticalScrollable ? [
           styles.DayPickerNavigation__verticalScrollable,
           isDefaultNav && styles.DayPickerNavigation__verticalScrollableDefault,
-        ] : []),
-      )}
+        ] : []),]
+      }
     >
       {!isVerticalScrollable && (
         <div
+          key={phrases.jumpToPrevMonth}
           role="button"
           tabIndex="0"
-          {...css(
-            styles.DayPickerNavigation_button,
+          style={
+            [styles.DayPickerNavigation_button,
             isDefaultNavPrev && styles.DayPickerNavigation_button__default,
             ...(isHorizontal ? [
               styles.DayPickerNavigation_button__horizontal,
@@ -136,8 +138,8 @@ function DayPickerNavigation({
                 styles.DayPickerNavigation_button__verticalDefault,
                 styles.DayPickerNavigation_prevButton__verticalDefault,
               ] : []),
-            ] : []),
-          )}
+            ] : []),]
+          }
           aria-label={phrases.jumpToPrevMonth}
           onClick={onPrevMonthClick}
           onKeyUp={(e) => {
@@ -153,10 +155,11 @@ function DayPickerNavigation({
       )}
 
       <div
+        key={phrases.jumpToNextMonth}
         role="button"
         tabIndex="0"
-        {...css(
-          styles.DayPickerNavigation_button,
+        style={
+          [styles.DayPickerNavigation_button,
           isDefaultNavNext && styles.DayPickerNavigation_button__default,
           ...(isHorizontal ? [
             styles.DayPickerNavigation_button__horizontal,
@@ -175,8 +178,8 @@ function DayPickerNavigation({
               isVerticalScrollable
                 && styles.DayPickerNavigation_nextButton__verticalScrollableDefault,
             ] : []),
-          ] : []),
-        )}
+          ] : []),]
+        }
         aria-label={phrases.jumpToNextMonth}
         onClick={onNextMonthClick}
         onKeyUp={(e) => {
@@ -195,8 +198,7 @@ function DayPickerNavigation({
 
 DayPickerNavigation.propTypes = propTypes;
 DayPickerNavigation.defaultProps = defaultProps;
-
-export default withStyles(({ reactDates: { color, zIndex } }) => ({
+const styles = {
   DayPickerNavigation: {
     position: 'relative',
     zIndex: zIndex + 2,
@@ -303,4 +305,6 @@ export default withStyles(({ reactDates: { color, zIndex } }) => ({
     width: 42,
     fill: color.text,
   },
-}), { pureComponent: pureComponentAvailable })(DayPickerNavigation);
+};
+
+export default Radium(DayPickerNavigation);

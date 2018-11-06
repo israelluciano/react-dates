@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { forbidExtraProps, nonNegativeInteger } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
 import throttle from 'lodash/throttle';
 import isTouchDevice from 'is-touch-device';
+import Radium from 'radium';
 
 import getInputHeight from '../utils/getInputHeight';
 import openDirectionShape from '../shapes/OpenDirectionShape';
@@ -17,13 +17,16 @@ import {
   MODIFIER_KEY_NAMES,
 } from '../constants';
 
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates } = DefaultTheme;
+
 const FANG_PATH_TOP = `M0,${FANG_HEIGHT_PX} ${FANG_WIDTH_PX},${FANG_HEIGHT_PX} ${FANG_WIDTH_PX / 2},0z`;
 const FANG_STROKE_TOP = `M0,${FANG_HEIGHT_PX} ${FANG_WIDTH_PX / 2},0 ${FANG_WIDTH_PX},${FANG_HEIGHT_PX}`;
 const FANG_PATH_BOTTOM = `M0,0 ${FANG_WIDTH_PX},0 ${FANG_WIDTH_PX / 2},${FANG_HEIGHT_PX}z`;
 const FANG_STROKE_BOTTOM = `M0,0 ${FANG_WIDTH_PX / 2},${FANG_HEIGHT_PX} ${FANG_WIDTH_PX},0`;
 
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   id: PropTypes.string.isRequired,
   placeholder: PropTypes.string, // also used as label
   displayValue: PropTypes.string,
@@ -185,8 +188,7 @@ class DateInput extends BaseClass {
       small,
       regular,
       block,
-      styles,
-      theme: { reactDates },
+
     } = this.props;
 
     const value = dateString || displayValue || '';
@@ -198,25 +200,25 @@ class DateInput extends BaseClass {
 
     return (
       <div
-        {...css(
-          styles.DateInput,
+        style={
+          [styles.DateInput,
           small && styles.DateInput__small,
           block && styles.DateInput__block,
           withFang && styles.DateInput__withFang,
           disabled && styles.DateInput__disabled,
           withFang && openDirection === OPEN_DOWN && styles.DateInput__openDown,
-          withFang && openDirection === OPEN_UP && styles.DateInput__openUp,
-        )}
+          withFang && openDirection === OPEN_UP && styles.DateInput__openUp,]
+        }
       >
         <input
-          {...css(
-            styles.DateInput_input,
+          style={
+            [styles.DateInput_input,
             small && styles.DateInput_input__small,
             regular && styles.DateInput_input__regular,
             readOnly && styles.DateInput_input__readOnly,
             focused && styles.DateInput_input__focused,
-            disabled && styles.DateInput_input__disabled,
-          )}
+            disabled && styles.DateInput_input__disabled,]
+          }
           aria-label={placeholder}
           type="text"
           id={id}
@@ -238,29 +240,29 @@ class DateInput extends BaseClass {
           <svg
             role="presentation"
             focusable="false"
-            {...css(
-              styles.DateInput_fang,
+            style={
+             [ styles.DateInput_fang,
               openDirection === OPEN_DOWN && {
                 top: inputHeight + verticalSpacing - FANG_HEIGHT_PX - 1,
               },
               openDirection === OPEN_UP && {
                 bottom: inputHeight + verticalSpacing - FANG_HEIGHT_PX - 1,
-              },
-            )}
+              },]
+            }
           >
             <path
-              {...css(styles.DateInput_fangShape)}
+              style={styles.DateInput_fangShape}
               d={openDirection === OPEN_DOWN ? FANG_PATH_TOP : FANG_PATH_BOTTOM}
             />
             <path
-              {...css(styles.DateInput_fangStroke)}
+              style={styles.DateInput_fangStroke}
               d={openDirection === OPEN_DOWN ? FANG_STROKE_TOP : FANG_STROKE_BOTTOM}
             />
           </svg>
         )}
 
         {screenReaderMessage && (
-          <p {...css(styles.DateInput_screenReaderMessage)} id={screenReaderMessageId}>
+          <p style={styles.DateInput_screenReaderMessage} id={screenReaderMessageId}>
             {screenReaderMessage}
           </p>
         )}
@@ -272,11 +274,9 @@ class DateInput extends BaseClass {
 DateInput.propTypes = propTypes;
 DateInput.defaultProps = defaultProps;
 
-export default withStyles(({
-  reactDates: {
-    border, color, sizing, spacing, font, zIndex,
-  },
-}) => ({
+const { border, color, sizing, spacing, font, zIndex } = reactDates;
+
+const styles = {
   DateInput: {
     margin: 0,
     padding: spacing.inputPadding,
@@ -381,4 +381,6 @@ export default withStyles(({
     stroke: color.core.border,
     fill: 'transparent',
   },
-}), { pureComponent: pureComponentAvailable })(DateInput);
+};
+
+export default Radium(DateInput);

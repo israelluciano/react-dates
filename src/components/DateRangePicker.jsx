@@ -1,11 +1,11 @@
 import React from 'react';
 import moment from 'moment';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
 import { Portal } from 'react-portal';
 import { forbidExtraProps } from 'airbnb-prop-types';
 import { addEventListener } from 'consolidated-events';
 import isTouchDevice from 'is-touch-device';
 import OutsideClickHandler from 'react-outside-click-handler';
+import Radium from 'radium';
 
 import DateRangePickerShape from '../shapes/DateRangePickerShape';
 import { DateRangePickerPhrases } from '../defaultPhrases';
@@ -37,8 +37,11 @@ import {
   DEFAULT_VERTICAL_SPACING,
 } from '../constants';
 
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates } = DefaultTheme;
+
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   ...DateRangePickerShape,
 });
 
@@ -382,14 +385,12 @@ class DateRangePicker extends BaseClass {
       dayAriaLabelFormat,
       isRTL,
       weekDayFormat,
-      styles,
       verticalHeight,
       transitionDuration,
       verticalSpacing,
       horizontalMonthPadding,
       small,
       disabled,
-      theme: { reactDates },
     } = this.props;
     const { dayPickerContainerStyles, isDayPickerFocused, showKeyboardShortcuts } = this.state;
 
@@ -401,7 +402,7 @@ class DateRangePicker extends BaseClass {
     );
 
     const closeIcon = customCloseIcon || (
-      <CloseButton {...css(styles.DateRangePicker_closeButton_svg)} />
+      <CloseButton style={styles.DateRangePicker_closeButton_svg} />
     );
 
     const inputHeight = getInputHeight(reactDates, small);
@@ -411,8 +412,8 @@ class DateRangePicker extends BaseClass {
     return (
       <div // eslint-disable-line jsx-a11y/no-static-element-interactions
         ref={this.setDayPickerContainerRef}
-        {...css(
-          styles.DateRangePicker_picker,
+        style={
+          [styles.DateRangePicker_picker,
           anchorDirection === ANCHOR_LEFT && styles.DateRangePicker_picker__directionLeft,
           anchorDirection === ANCHOR_RIGHT && styles.DateRangePicker_picker__directionRight,
           orientation === HORIZONTAL_ORIENTATION && styles.DateRangePicker_picker__horizontal,
@@ -426,8 +427,8 @@ class DateRangePicker extends BaseClass {
           withAnyPortal && styles.DateRangePicker_picker__portal,
           withFullScreenPortal && styles.DateRangePicker_picker__fullScreenPortal,
           isRTL && styles.DateRangePicker_picker__rtl,
-          dayPickerContainerStyles,
-        )}
+          dayPickerContainerStyles,]
+        }
         onClick={onOutsideClick}
       >
         <DayPickerRangeController
@@ -476,7 +477,7 @@ class DateRangePicker extends BaseClass {
 
         {withFullScreenPortal && (
           <button
-            {...css(styles.DateRangePicker_closeButton)}
+            style={styles.DateRangePicker_closeButton}
             type="button"
             onClick={this.onOutsideClick}
             aria-label={phrases.closeDatePicker}
@@ -524,7 +525,6 @@ class DateRangePicker extends BaseClass {
       verticalSpacing,
       small,
       regular,
-      styles,
     } = this.props;
 
     const { isDateRangePickerInputFocused } = this.state;
@@ -580,10 +580,10 @@ class DateRangePicker extends BaseClass {
     return (
       <div
         ref={this.setContainerRef}
-        {...css(
-          styles.DateRangePicker,
-          block && styles.DateRangePicker__block,
-        )}
+        style={
+          [styles.DateRangePicker,
+          block && styles.DateRangePicker__block,]
+        }
       >
         {enableOutsideClick && (
           <OutsideClickHandler onOutsideClick={this.onOutsideClick}>
@@ -602,7 +602,8 @@ DateRangePicker.propTypes = propTypes;
 DateRangePicker.defaultProps = defaultProps;
 
 export { DateRangePicker as PureDateRangePicker };
-export default withStyles(({ reactDates: { color, zIndex } }) => ({
+const { color, zIndex } = reactDates;
+const styles = {
   DateRangePicker: {
     position: 'relative',
     display: 'inline-block',
@@ -674,4 +675,6 @@ export default withStyles(({ reactDates: { color, zIndex } }) => ({
     width: 15,
     fill: color.core.grayLighter,
   },
-}), { pureComponent: pureComponentAvailable })(DateRangePicker);
+};
+
+export default Radium(DateRangePicker);

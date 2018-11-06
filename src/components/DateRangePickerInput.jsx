@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { forbidExtraProps, nonNegativeInteger } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
+import Radium from 'radium';
 
 import { DateRangePickerInputPhrases } from '../defaultPhrases';
 import getPhrasePropTypes from '../utils/getPhrasePropTypes';
@@ -10,7 +10,6 @@ import openDirectionShape from '../shapes/OpenDirectionShape';
 import DateInput from './DateInput';
 import IconPositionShape from '../shapes/IconPositionShape';
 import DisabledShape from '../shapes/DisabledShape';
-import { pureComponentAvailable } from '../utils/baseClass';
 
 import RightArrow from './RightArrow';
 import LeftArrow from './LeftArrow';
@@ -25,8 +24,11 @@ import {
   OPEN_DOWN,
 } from '../constants';
 
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates: { border, color, sizing } } = DefaultTheme;
+
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   startDateId: PropTypes.string,
   startDatePlaceholderText: PropTypes.string,
   screenReaderMessage: PropTypes.string,
@@ -160,28 +162,27 @@ function DateRangePickerInput({
   verticalSpacing,
   small,
   regular,
-  styles,
 }) {
   const calendarIcon = customInputIcon || (
-    <CalendarIcon {...css(styles.DateRangePickerInput_calendarIcon_svg)} />
+    <CalendarIcon style={styles.DateRangePickerInput_calendarIcon_svg} />
   );
 
-  let arrowIcon = customArrowIcon || <RightArrow {...css(styles.DateRangePickerInput_arrow_svg)} />;
-  if (isRTL) arrowIcon = <LeftArrow {...css(styles.DateRangePickerInput_arrow_svg)} />;
+  let arrowIcon = customArrowIcon || <RightArrow style={styles.DateRangePickerInput_arrow_svg} />;
+  if (isRTL) arrowIcon = <LeftArrow style={styles.DateRangePickerInput_arrow_svg} />;
   if (small) arrowIcon = '-';
 
   const closeIcon = customCloseIcon || (
     <CloseButton
-      {...css(
-        styles.DateRangePickerInput_clearDates_svg,
-        small && styles.DateRangePickerInput_clearDates_svg__small,
-      )}
+        style={
+        [styles.DateRangePickerInput_clearDates_svg,
+        small && styles.DateRangePickerInput_clearDates_svg__small,]
+      }
     />
   );
   const screenReaderText = screenReaderMessage || phrases.keyboardNavigationInstructions;
   const inputIcon = (showDefaultInputIcon || customInputIcon !== null) && (
     <button
-      {...css(styles.DateRangePickerInput_calendarIcon)}
+      style={styles.DateRangePickerInput_calendarIcon}
       type="button"
       disabled={disabled}
       aria-label={phrases.focusStartDate}
@@ -195,14 +196,14 @@ function DateRangePickerInput({
 
   return (
     <div
-      {...css(
-        styles.DateRangePickerInput,
+    style={
+        [styles.DateRangePickerInput,
         disabled && styles.DateRangePickerInput__disabled,
         isRTL && styles.DateRangePickerInput__rtl,
         !noBorder && styles.DateRangePickerInput__withBorder,
         block && styles.DateRangePickerInput__block,
-        showClearDates && styles.DateRangePickerInput__showClearDates,
-      )}
+        showClearDates && styles.DateRangePickerInput__showClearDates,]
+      }
     >
       {inputIconPosition === ICON_BEFORE_POSITION && inputIcon}
 
@@ -230,7 +231,7 @@ function DateRangePickerInput({
 
       {
         <div
-          {...css(styles.DateRangePickerInput_arrow)}
+          style={styles.DateRangePickerInput_arrow}
           aria-hidden="true"
           role="presentation"
         >
@@ -264,12 +265,12 @@ function DateRangePickerInput({
         <button
           type="button"
           aria-label={phrases.clearDates}
-          {...css(
-            styles.DateRangePickerInput_clearDates,
+          style={
+            [styles.DateRangePickerInput_clearDates,
             small && styles.DateRangePickerInput_clearDates__small,
             !customCloseIcon && styles.DateRangePickerInput_clearDates_default,
-            !(startDate || endDate) && styles.DateRangePickerInput_clearDates__hide,
-          )}
+            !(startDate || endDate) && styles.DateRangePickerInput_clearDates__hide,]
+          }
           onClick={onClearDates}
           disabled={disabled}
         >
@@ -285,8 +286,7 @@ function DateRangePickerInput({
 
 DateRangePickerInput.propTypes = propTypes;
 DateRangePickerInput.defaultProps = defaultProps;
-
-export default withStyles(({ reactDates: { border, color, sizing } }) => ({
+const styles = {
   DateRangePickerInput: {
     backgroundColor: color.background,
     display: 'inline-block',
@@ -397,4 +397,6 @@ export default withStyles(({ reactDates: { border, color, sizing } }) => ({
     width: 14,
     verticalAlign: 'middle',
   },
-}), { pureComponent: pureComponentAvailable })(DateRangePickerInput);
+};
+
+export default Radium(DateRangePickerInput);

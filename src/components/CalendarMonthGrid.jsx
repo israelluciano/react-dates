@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import momentPropTypes from 'react-moment-proptypes';
 import { forbidExtraProps, mutuallyExclusiveProps, nonNegativeInteger } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
 import moment from 'moment';
 import { addEventListener } from 'consolidated-events';
+import Radium from 'radium';
 
 import { CalendarDayPhrases } from '../defaultPhrases';
 import getPhrasePropTypes from '../utils/getPhrasePropTypes';
@@ -22,6 +22,9 @@ import ModifiersShape from '../shapes/ModifiersShape';
 import ScrollableOrientationShape from '../shapes/ScrollableOrientationShape';
 import DayOfWeekShape from '../shapes/DayOfWeekShape';
 import BaseClass, { pureComponentAvailable } from '../utils/baseClass';
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates: { color, noScrollBarOnVerticalScrollable, spacing, zIndex } } = DefaultTheme;
 
 import {
   HORIZONTAL_ORIENTATION,
@@ -31,7 +34,6 @@ import {
 } from '../constants';
 
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   enableOutsideDays: PropTypes.bool,
   firstVisibleMonthIndex: PropTypes.number,
   horizontalMonthPadding: nonNegativeInteger,
@@ -259,7 +261,6 @@ class CalendarMonthGrid extends BaseClass {
       focusedDate,
       isFocused,
       isRTL,
-      styles,
       phrases,
       dayAriaLabelFormat,
       transitionDuration,
@@ -286,8 +287,8 @@ class CalendarMonthGrid extends BaseClass {
 
     return (
       <div
-        {...css(
-          styles.CalendarMonthGrid,
+        style={
+          [styles.CalendarMonthGrid,
           isHorizontal && styles.CalendarMonthGrid__horizontal,
           isVertical && styles.CalendarMonthGrid__vertical,
           isVerticalScrollable && styles.CalendarMonthGrid__vertical_scrollable,
@@ -299,7 +300,7 @@ class CalendarMonthGrid extends BaseClass {
             ...getTransformStyles(transformValue),
             width,
           },
-        )}
+        ]}
         ref={this.setContainerRef}
         onTransitionEnd={onMonthTransitionEnd}
       >
@@ -312,8 +313,8 @@ class CalendarMonthGrid extends BaseClass {
           return (
             <div
               key={monthString}
-              {...css(
-                isHorizontal && styles.CalendarMonthGrid_month__horizontal,
+              style={
+                [isHorizontal && styles.CalendarMonthGrid_month__horizontal,
                 hideForAnimation && styles.CalendarMonthGrid_month__hideForAnimation,
                 showForAnimation && !isVertical && !isRTL && {
                   position: 'absolute',
@@ -327,8 +328,8 @@ class CalendarMonthGrid extends BaseClass {
                   position: 'absolute',
                   top: -translationValue,
                 },
-                !isVisible && !isAnimating && styles.CalendarMonthGrid_month__hidden,
-              )}
+                !isVisible && !isAnimating && styles.CalendarMonthGrid_month__hidden,]
+              }
             >
               <CalendarMonth
                 month={month}
@@ -367,14 +368,7 @@ class CalendarMonthGrid extends BaseClass {
 CalendarMonthGrid.propTypes = propTypes;
 CalendarMonthGrid.defaultProps = defaultProps;
 
-export default withStyles(({
-  reactDates: {
-    color,
-    noScrollBarOnVerticalScrollable,
-    spacing,
-    zIndex,
-  },
-}) => ({
+const styles = {
   CalendarMonthGrid: {
     background: color.background,
     textAlign: 'left',
@@ -422,4 +416,6 @@ export default withStyles(({
   CalendarMonthGrid_month__hidden: {
     visibility: 'hidden',
   },
-}), { pureComponent: pureComponentAvailable })(CalendarMonthGrid);
+};
+
+export default Radium(CalendarMonthGrid);

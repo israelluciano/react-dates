@@ -4,8 +4,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import momentPropTypes from 'react-moment-proptypes';
 import { forbidExtraProps, mutuallyExclusiveProps, nonNegativeInteger } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
 import moment from 'moment';
+import Radium from 'radium';
 
 import { CalendarDayPhrases } from '../defaultPhrases';
 import getPhrasePropTypes from '../utils/getPhrasePropTypes';
@@ -22,6 +22,9 @@ import ModifiersShape from '../shapes/ModifiersShape';
 import ScrollableOrientationShape from '../shapes/ScrollableOrientationShape';
 import DayOfWeekShape from '../shapes/DayOfWeekShape';
 import BaseClass, { pureComponentAvailable } from '../utils/baseClass';
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates: { font, color, spacing } } = DefaultTheme;
 
 import {
   HORIZONTAL_ORIENTATION,
@@ -30,7 +33,6 @@ import {
 } from '../constants';
 
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   month: momentPropTypes.momentObj,
   horizontalMonthPadding: nonNegativeInteger,
   isVisible: PropTypes.bool,
@@ -173,7 +175,6 @@ class CalendarMonth extends BaseClass {
       renderDayContents,
       renderMonthElement,
       renderMonthText,
-      styles,
       verticalBorderSpacing,
     } = this.props;
 
@@ -184,18 +185,18 @@ class CalendarMonth extends BaseClass {
 
     return (
       <div
-        {...css(
-          styles.CalendarMonth,
-          { padding: `0 ${horizontalMonthPadding}px` },
-        )}
+        style={
+          [styles.CalendarMonth,
+          { padding: `0 ${horizontalMonthPadding}px` },]
+        }
         data-visible={isVisible}
       >
         <div
           ref={this.setCaptionRef}
-          {...css(
-            styles.CalendarMonth_caption,
-            verticalScrollable && styles.CalendarMonth_caption__verticalScrollable,
-          )}
+          style={
+            [styles.CalendarMonth_caption,
+            verticalScrollable && styles.CalendarMonth_caption__verticalScrollable,]
+          }
         >
           {renderMonthElement ? (
             renderMonthElement({ month, onMonthSelect, onYearSelect })
@@ -207,11 +208,11 @@ class CalendarMonth extends BaseClass {
         </div>
 
         <table
-          {...css(
-            !verticalBorderSpacing && styles.CalendarMonth_table,
+          style={
+            [!verticalBorderSpacing && styles.CalendarMonth_table,
             verticalBorderSpacing && styles.CalendarMonth_verticalSpacing,
-            verticalBorderSpacing && { borderSpacing: `0px ${verticalBorderSpacing}px` },
-          )}
+            verticalBorderSpacing && { borderSpacing: `0px ${verticalBorderSpacing}px` },]
+          }
           role="presentation"
         >
           <tbody>
@@ -244,7 +245,7 @@ class CalendarMonth extends BaseClass {
 CalendarMonth.propTypes = propTypes;
 CalendarMonth.defaultProps = defaultProps;
 
-export default withStyles(({ reactDates: { color, font, spacing } }) => ({
+const styles = {
   CalendarMonth: {
     background: color.background,
     textAlign: 'center',
@@ -274,4 +275,6 @@ export default withStyles(({ reactDates: { color, font, spacing } }) => ({
     paddingTop: 12,
     paddingBottom: 7,
   },
-}), { pureComponent: pureComponentAvailable })(CalendarMonth);
+};
+
+export default Radium(CalendarMonth);

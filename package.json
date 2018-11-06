@@ -118,6 +118,7 @@
     "object.assign": "^4.1.0",
     "object.values": "^1.0.4",
     "prop-types": "^15.6.1",
+    "radium": "^0.25.0",
     "react-addons-shallow-compare": "^15.6.2",
     "react-moment-proptypes": "^1.6.0",
     "react-outside-click-handler": "^1.2.0",

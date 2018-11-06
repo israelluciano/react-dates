@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import momentPropTypes from 'react-moment-proptypes';
 import { forbidExtraProps, nonNegativeInteger, or } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
 import moment from 'moment';
+import Radium from 'radium';
 
 import { CalendarDayPhrases } from '../defaultPhrases';
 import getPhrasePropTypes from '../utils/getPhrasePropTypes';
@@ -13,7 +13,7 @@ import BaseClass, { pureComponentAvailable } from '../utils/baseClass';
 import { DAY_SIZE } from '../constants';
 import DefaultTheme from '../theme/DefaultTheme';
 
-const { reactDates: { color } } = DefaultTheme;
+const { reactDates: { color, font } } = DefaultTheme;
 
 function getStyles(stylesObj, isHovered) {
   if (!stylesObj) return null;
@@ -39,7 +39,6 @@ const DayStyleShape = PropTypes.shape({
 });
 
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   day: momentPropTypes.momentObj,
   daySize: nonNegativeInteger,
   isOutsideDay: PropTypes.bool,
@@ -278,7 +277,6 @@ class CustomizableCalendarDay extends BaseClass {
       modifiers,
       tabIndex,
       renderDayContents,
-      styles,
       phrases,
 
       defaultStyles: defaultStylesWithHover,
@@ -314,8 +312,8 @@ class CustomizableCalendarDay extends BaseClass {
 
     return (
       <td
-        {...css(
-          styles.CalendarDay,
+        style={
+          [styles.CalendarDay,
           useDefaultCursor && styles.CalendarDay__defaultCursor,
           daySizeStyles,
           getStyles(defaultStylesWithHover, isHovered),
@@ -333,8 +331,8 @@ class CustomizableCalendarDay extends BaseClass {
           selected && getStyles(selectedStylesWithHover, isHovered),
           modifiers.has('selected-start') && getStyles(selectedStartStylesWithHover, isHovered),
           modifiers.has('selected-end') && getStyles(selectedEndStylesWithHover, isHovered),
-          isOutsideRange && getStyles(blockedOutOfRangeStylesWithHover, isHovered),
-        )}
+          isOutsideRange && getStyles(blockedOutOfRangeStylesWithHover, isHovered),]
+        }
         role="button" // eslint-disable-line jsx-a11y/no-noninteractive-element-to-interactive-role
         ref={this.setButtonRef}
         aria-label={ariaLabel}
@@ -353,9 +351,7 @@ class CustomizableCalendarDay extends BaseClass {
 
 CustomizableCalendarDay.propTypes = propTypes;
 CustomizableCalendarDay.defaultProps = defaultProps;
-
-export { CustomizableCalendarDay as PureCustomizableCalendarDay };
-export default withStyles(({ reactDates: { font } }) => ({
+const styles = {
   CalendarDay: {
     boxSizing: 'border-box',
     cursor: 'pointer',
@@ -370,4 +366,7 @@ export default withStyles(({ reactDates: { font } }) => ({
   CalendarDay__defaultCursor: {
     cursor: 'default',
   },
-}), { pureComponent: pureComponentAvailable })(CustomizableCalendarDay);
+};
+
+export { CustomizableCalendarDay as PureCustomizableCalendarDay };
+export default Radium(CustomizableCalendarDay);

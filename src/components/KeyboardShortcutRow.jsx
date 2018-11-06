@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { forbidExtraProps } from 'airbnb-prop-types';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
-import { pureComponentAvailable } from '../utils/baseClass';
+import DefaultTheme from '../theme/DefaultTheme';
+import Radium from 'radium';
+const { reactDates: { color } } = DefaultTheme;
 
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   unicode: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   action: PropTypes.string.isRequired,
@@ -21,23 +21,22 @@ function KeyboardShortcutRow({
   label,
   action,
   block,
-  styles,
 }) {
   return (
     <li
-      {...css(
-        styles.KeyboardShortcutRow,
-        block && styles.KeyboardShortcutRow__block,
-      )}
+    style={
+        [styles.KeyboardShortcutRow,
+        block && styles.KeyboardShortcutRow__block,]
+      }
     >
       <div
-        {...css(
-          styles.KeyboardShortcutRow_keyContainer,
-          block && styles.KeyboardShortcutRow_keyContainer__block,
-        )}
+        style={
+          [styles.KeyboardShortcutRow_keyContainer,
+          block && styles.KeyboardShortcutRow_keyContainer__block,]
+        }
       >
         <span
-          {...css(styles.KeyboardShortcutRow_key)}
+          style={styles.KeyboardShortcutRow_key}
           role="img"
           aria-label={`${label},`} // add comma so screen readers will pause before reading action
         >
@@ -45,7 +44,7 @@ function KeyboardShortcutRow({
         </span>
       </div>
 
-      <div {...css(styles.KeyboardShortcutRow_action)}>
+      <div style={styles.KeyboardShortcutRow_action}>
         {action}
       </div>
     </li>
@@ -54,8 +53,7 @@ function KeyboardShortcutRow({
 
 KeyboardShortcutRow.propTypes = propTypes;
 KeyboardShortcutRow.defaultProps = defaultProps;
-
-export default withStyles(({ reactDates: { color } }) => ({
+const styles = {
   KeyboardShortcutRow: {
     listStyle: 'none',
     margin: '6px 0',
@@ -90,4 +88,6 @@ export default withStyles(({ reactDates: { color } }) => ({
     wordBreak: 'break-word',
     marginLeft: 8,
   },
-}), { pureComponent: pureComponentAvailable })(KeyboardShortcutRow);
+};
+
+export default Radium(KeyboardShortcutRow);

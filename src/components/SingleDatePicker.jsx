@@ -1,11 +1,11 @@
 import React from 'react';
 import moment from 'moment';
-import { css, withStyles, withStylesPropTypes } from 'react-with-styles';
 import { Portal } from 'react-portal';
 import { forbidExtraProps } from 'airbnb-prop-types';
 import { addEventListener } from 'consolidated-events';
 import isTouchDevice from 'is-touch-device';
 import OutsideClickHandler from 'react-outside-click-handler';
+import Radium from 'radium';
 
 import SingleDatePickerShape from '../shapes/SingleDatePickerShape';
 import { SingleDatePickerPhrases } from '../defaultPhrases';
@@ -35,8 +35,11 @@ import {
   DEFAULT_VERTICAL_SPACING,
 } from '../constants';
 
+import DefaultTheme from '../theme/DefaultTheme';
+
+const { reactDates } = DefaultTheme;
+
 const propTypes = forbidExtraProps({
-  ...withStylesPropTypes,
   ...SingleDatePickerShape,
 });
 
@@ -379,13 +382,11 @@ class SingleDatePicker extends BaseClass {
       isDayBlocked,
       isDayHighlighted,
       weekDayFormat,
-      styles,
       verticalHeight,
       transitionDuration,
       verticalSpacing,
       horizontalMonthPadding,
       small,
-      theme: { reactDates },
     } = this.props;
     const { dayPickerContainerStyles, isDayPickerFocused, showKeyboardShortcuts } = this.state;
 
@@ -399,8 +400,8 @@ class SingleDatePicker extends BaseClass {
     return (
       <div // eslint-disable-line jsx-a11y/no-static-element-interactions
         ref={this.setDayPickerContainerRef}
-        {...css(
-          styles.SingleDatePicker_picker,
+        style={
+          [styles.SingleDatePicker_picker,
           anchorDirection === ANCHOR_LEFT && styles.SingleDatePicker_picker__directionLeft,
           anchorDirection === ANCHOR_RIGHT && styles.SingleDatePicker_picker__directionRight,
           openDirection === OPEN_DOWN && styles.SingleDatePicker_picker__openDown,
@@ -416,8 +417,8 @@ class SingleDatePicker extends BaseClass {
           withAnyPortal && styles.SingleDatePicker_picker__portal,
           withFullScreenPortal && styles.SingleDatePicker_picker__fullScreenPortal,
           isRTL && styles.SingleDatePicker_picker__rtl,
-          dayPickerContainerStyles,
-        )}
+          dayPickerContainerStyles,]
+        }
         onClick={onOutsideClick}
       >
         <DayPickerSingleDateController
@@ -463,12 +464,12 @@ class SingleDatePicker extends BaseClass {
 
         {withFullScreenPortal && (
           <button
-            {...css(styles.SingleDatePicker_closeButton)}
+            style={styles.SingleDatePicker_closeButton}
             aria-label={phrases.closeDatePicker}
             type="button"
             onClick={this.onOutsideClick}
           >
-            <div {...css(styles.SingleDatePicker_closeButton_svg)}>
+            <div style={styles.SingleDatePicker_closeButton_svg}>
               {closeIcon}
             </div>
           </button>
@@ -506,7 +507,6 @@ class SingleDatePicker extends BaseClass {
       verticalSpacing,
       reopenPickerOnClearDate,
       keepOpenOnDateSelect,
-      styles,
       isOutsideRange,
     } = this.props;
 
@@ -555,10 +555,10 @@ class SingleDatePicker extends BaseClass {
     return (
       <div
         ref={this.setContainerRef}
-        {...css(
-          styles.SingleDatePicker,
-          block && styles.SingleDatePicker__block,
-        )}
+        style={
+          [styles.SingleDatePicker,
+          block && styles.SingleDatePicker__block,]
+        }
       >
         {enableOutsideClick && (
           <OutsideClickHandler onOutsideClick={this.onOutsideClick}>
@@ -575,9 +575,9 @@ class SingleDatePicker extends BaseClass {
 
 SingleDatePicker.propTypes = propTypes;
 SingleDatePicker.defaultProps = defaultProps;
+const { reactDates: { color, zIndex } } = DefaultTheme;
 
-export { SingleDatePicker as PureSingleDatePicker };
-export default withStyles(({ reactDates: { color, zIndex } }) => ({
+const styles = {
   SingleDatePicker: {
     position: 'relative',
     display: 'inline-block',
@@ -649,4 +649,7 @@ export default withStyles(({ reactDates: { color, zIndex } }) => ({
     width: 15,
     fill: color.core.grayLighter,
   },
-}), { pureComponent: pureComponentAvailable })(SingleDatePicker);
+};
+
+export { SingleDatePicker as PureSingleDatePicker };
+export default Radium(SingleDatePicker);
